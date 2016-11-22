@@ -160,8 +160,6 @@ class Protocol {
 					$data[$key] = $rs;
 				}
 			}
-
-	        var_dump(get_class($response));
 	        $this->response(['code' => 200, 'rs' => $data], $request, $response);
         });
     }
