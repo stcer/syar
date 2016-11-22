@@ -1,0 +1,43 @@
+{
+    "name": "stcer/syar",
+    "authors": [
+        {
+            "name": "stcer",
+            "email": "7443930@qq.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": {
+            "syar": "src/"
+        }
+    },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@192.168.0.252:repos/other_php_doc.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@192.168.0.252:repos/j_log.git"
+        },
+        {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        },
+        {"packagist": false}
+    ],
+
+    "require": {
+        "stcer/jlog" : "*"
+    },
+
+    "require-dev" : {
+        "stcer/jdoc" : "*"
+    },
+
+    "config" : {
+        "secure-http" : false
+    }
+}
