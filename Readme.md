@@ -30,7 +30,7 @@ $server->setDispatcher(function(\syar\Token $token, $isDocument) use ($service){
         $params = $token->getArgs();
         $value = call_user_func_array(array($service, $method), $params);
     } else {
-        $value = "<h1>Yar api document</h1>";
+        $value = "Yar api document";
     }
     return $value;
 });
@@ -107,7 +107,6 @@ $calls = [
 ];
 $rs = $client->calls($calls);
 
-echo "<pre>";
 var_dump($rs);
 ~~~
 
