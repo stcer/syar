@@ -18,8 +18,8 @@ composer require 'stcer/syar:*'
 example\server.php
 ~~~
 use syar\Server;
-use j\log\File as FileLog;
-use j\log\Log;
+use syar\log\File as FileLog;
+use syar\log\Log;
 
 $vendorPath = __Your vendor path__;
 /** @var \Composer\Autoload\ClassLoader $loader */
