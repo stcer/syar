@@ -23,7 +23,6 @@ function post($url, $param = [], $header = []){
     $sContent = curl_exec($oCurl);
     $aStatus = curl_getinfo($oCurl);
     curl_close($oCurl);
-
     //var_dump($aStatus);
     //var_dump($sContent);
 

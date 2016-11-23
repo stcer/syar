@@ -1,12 +1,15 @@
 {
     "name": "stcer/syar",
-    "authors": [
-        {
+    "authors": [{
             "name": "stcer",
             "email": "7443930@qq.com"
-        }
-    ],
-
+        }],
+    "license": "MIT",
+    "keywords": [
+        "yar server",
+        "swoole"
+        ],
+    "description" : " yar swoole server",
     "autoload": {
         "psr-4": {
             "syar\\": "src/"

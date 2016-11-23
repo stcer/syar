@@ -5,7 +5,7 @@
  * Class PackerTest
  * @package syar
  */
-class CommonTest extends \PHPUnit_Framework_TestCase{
+class ClientTest extends \PHPUnit_Framework_TestCase{
 	/**
 	 * @param $api
 	 * @return Yar_Client
