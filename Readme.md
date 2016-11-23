@@ -8,6 +8,10 @@
 *   ext-swoole 1.8.8+ 
 *   ext-msgpack 如果yar使用msgpack编码方式
 
+## Install
+~~~
+composer require 'stcer/syar:*'
+~~~
 
 ## Example
 **服务端**
