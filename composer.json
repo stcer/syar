@@ -15,14 +15,6 @@
 
     "repositories": [
         {
-            "type": "vcs",
-            "url":  "git@192.168.0.252:repos/other_php_doc.git"
-        },
-        {
-            "type": "vcs",
-            "url":  "git@192.168.0.252:repos/j_log.git"
-        },
-        {
             "type": "composer",
             "url": "https://packagist.phpcomposer.com"
         },
@@ -36,7 +28,6 @@
     },
 
     "require-dev" : {
-        "stcer/jdoc" : "*"
     },
 
     "config" : {
