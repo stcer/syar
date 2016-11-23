@@ -9,3 +9,4 @@ out
 gen
 vendor
 composer.lock
+tests/phpunit.phar

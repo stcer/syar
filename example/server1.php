@@ -1,7 +1,7 @@
 <?php
 
 use syar\Server;
-use j\log\Log;
+use syar\log\Log;
 
 $vendorPath = realpath(__DIR__ . "/../vendor/");
 /** @var \Composer\Autoload\ClassLoader $loader */

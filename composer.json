@@ -30,7 +30,9 @@
     ],
 
     "require": {
-        "stcer/jlog" : "*"
+        "php": ">=5.4.16",
+        "ext-swoole": ">=1.8.8",
+        "ext-msgpack": "*"
     },
 
     "require-dev" : {

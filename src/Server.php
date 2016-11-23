@@ -4,14 +4,13 @@ namespace syar;
 
 use swoole_server;
 use swoole_http_server;
-use j\log\TraitLog;
 
 /**
  * Class Server
  * @package syar\base
  */
 class Server {
-    use TraitLog;
+    use log\TraitLog;
 
 	protected $host = '0.0.0.0';
 	protected $port;

@@ -5,19 +5,18 @@ $loader = include($vendorPath . "/autoload.php");
 
 $url = "http://127.0.0.1:5604/multiple";
 $client = new Yar_client($url);
-
-$calls = [
-	[
+$requests = [
+	'age' => [
 		'api' => '/test',
 		'method' => 'getAge',
 		'params' => []
-	],[
+	],
+	'name' => [
 		'api' => '/test',
 		'method' => 'getName',
-		'params' => [rand(1, 245301)]
-	]
-];
-$rs = $client->calls($calls);
+		'params' => ['tester']
+	]];
+$rs = $client->calls($requests);
 
 //
 echo "<pre>";

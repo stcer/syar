@@ -2,7 +2,6 @@
 
 namespace syar;
 
-use j\log\TraitLog;
 use swoole_http_request,
     swoole_http_response,
     swoole_http_server;
@@ -14,7 +13,7 @@ use swoole_http_request,
 class Protocol {
 
     use event\TraitEventManager;
-	use TraitLog;
+	use log\TraitLog;
 
     const EVENT_REQUEST_BEFORE = 'Protocol:requestBefore';
     const EVENT_RESPONSE_AFTER = 'Protocol:responseAfter';

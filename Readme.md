@@ -37,7 +37,9 @@ $server->setDispatcher(function(\syar\Token $token, $isDocument) use ($service){
 
 $server->run(['max_request' => 10000]);
 ~~~
+
 example/service/Test.php
+
 ~~~
 namespace syar\example\service;
 
