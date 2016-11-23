@@ -1,12 +1,13 @@
 ## 为何用swoole来实现 Yar server
 *   历史代码使用了yar, 不想过多修改客户端代码
 *   提升Yar服务端执行效率
-*   学习swoole, yar
-
+*   学习swoole, yar(在此感谢laruence,rango及swoole开发团队)
 
 ## Require
 *   php5.4+
-*   swoole 1.8.8+ 
+*   ext-swoole 1.8.8+ 
+*   ext-msgpack 如果yar使用msgpack编码方式
+
 
 ## Example
 **服务端**
@@ -122,3 +123,4 @@ var_dump($rs);
 
 ## 已知问题
 1.  未完成文档解析， 可使用自带的yar server显示文档
+1.  由于代码是从私有框架独立出来，可能存在未知bug
