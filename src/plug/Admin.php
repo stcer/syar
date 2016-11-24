@@ -26,7 +26,7 @@ class Admin implements InterfaceListen {
             return false;
         }
 
-        $server = $protocol->server;
+        $server = $protocol->server->getSwooleServer();
         $cmd = str_replace($this->pathPrefix, '', $path);
         switch($cmd){
             case "status" :

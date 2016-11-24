@@ -4,10 +4,12 @@ namespace syar;
 
 use swoole_server;
 use swoole_http_server;
+use syar\event\InterfaceEventDispatcher;
+use syar\event\InterfaceListen;
 
 /**
  * Class Server
- * @package syar\base
+ * @package syar
  */
 class Server {
     use log\TraitLog;
@@ -25,7 +27,6 @@ class Server {
 	 */
 	public $taskManager;
 
-    public $error_log = '/tmp/swoole_error.log';
     public $timeout;
     static $sw_mode = SWOOLE_PROCESS;
 
@@ -218,10 +219,14 @@ class Server {
 	 */
 	public function addPlug($plug, $forProtocol = true){
 		if($forProtocol){
-			$this->getProtocol()->attaches($plug);
+            $dispatcher = $this->getProtocol();
 		} else {
-			$this->getProtocol()->getProcessor()->attaches($plug);
+            $dispatcher = $this->getProtocol()->getProcessor();
 		}
+
+        if($dispatcher instanceof InterfaceEventDispatcher){
+            $dispatcher->attaches($plug);
+        }
 		return $this;
 	}
 }

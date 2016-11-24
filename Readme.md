@@ -3,12 +3,12 @@
 *   提升Yar服务端执行效率
 *   学习swoole, yar(在此感谢laruence,rango及swoole开发团队)
 
-## Require
-*   php5.4+
-*   ext-swoole 1.8.8+ 
-*   ext-msgpack 如果yar使用msgpack编码方式
+## Requirements
+1.   php5.4+
+1.   ext-swoole 1.8.8+ 
+1.   ext-msgpack 如果yar使用msgpack编码方式
 
-## Install
+## Installation
 ~~~
 composer require 'stcer/syar:*'
 ~~~
@@ -117,9 +117,24 @@ $rs = $client->calls($calls);
 var_dump($rs);
 ~~~
 
+
+### Protocol插件与Dispatcher插件
+
+应用示例参考 example/server_plug.php, client_plug.php
+
+Protocol触发事件：
+1.  Protocol::EVENT_REQUEST_BEFORE, 请求开始触发, 可以提前响应客户端， 中断正常解析流程
+1.  Protocol::EVENT_RESPONSE_AFTER, 请求结束触发, 可以适用请求结束之后的处理工作，比如写日志等
+
+Dispatcher触发事件：
+1.  Dispatcher::EVENT_REQUEST_BEFORE, Api接口执行前触发
+1.  Dispatcher::EVENT_REQUEST_AFTER, Api接口执行后触发
+
+
 ### 投递任务到task进程异步执行
 
-参考 
+应用示例参考 example/taskManagerServer.php
+
 *   TaskMananger->regTask()
 *   TaskMananger->doTask()
 *   TaskMananger->doTasks()

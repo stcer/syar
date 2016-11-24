@@ -3,12 +3,13 @@
 namespace syar;
 
 use Exception;
+use syar\event\InterfaceEventDispatcher;
 
 /**
  * Class Dispatcher
  * @package syar
  */
-class Dispatcher{
+class Dispatcher implements InterfaceEventDispatcher{
     use event\TraitEventManager;
 
     protected $ns = '';
@@ -123,7 +124,7 @@ class Dispatcher{
             $rs = $this->process($token, $protocol);
 
             if($this->hasListener(self::EVENT_REQUEST_AFTER)){
-                $this->trigger(self::EVENT_REQUEST_AFTER, $token, $protocol, $rs);
+                $this->trigger(self::EVENT_REQUEST_AFTER, $rs, $token, $protocol);
             }
             return $rs;
         } else {

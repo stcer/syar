@@ -4,6 +4,8 @@ namespace syar\plug;
 
 use syar\event\InterfaceListen;
 use syar\Dispatcher;
+use syar\Protocol;
+use syar\Token;
 
 /**
  * Class LogSample
@@ -11,9 +13,9 @@ use syar\Dispatcher;
  */
 class LogSample implements InterfaceListen {
     protected function _time(){
-        $mtime = microtime ();
-        $mtime = explode (' ', $mtime);
-        return $mtime[1] + $mtime[0];
+        $time = microtime ();
+        $time = explode (' ', $time);
+        return $time[1] + $time[0];
     }
 
 
@@ -25,12 +27,24 @@ class LogSample implements InterfaceListen {
 
     protected $start;
 
-
-    public function onRequest2($request){
-        $message =   $request[0] . "({$request[1]})" . "\t"
+    /**
+     * @param mixed $rs
+     * @param Token $token
+     * @param Protocol $protocol
+     */
+    public function onRequest2($rs, $token, $protocol){
+        $message = $token->getClass()
+            . "({$token->getMethod()})" . "\t"
             . round($this->_time() - $this->start, 5)  . "\t"
-            . json_encode($request[2]);
-        echo $message . "\n";
+            . json_encode($token->getArgs());
+        $log = date("Y-m-d H:i:s") . " " .  $message . "\n";
+
+        $taskManager = $protocol->server->getTaskManager();
+        if($taskManager->has('log')){
+            $taskManager->doTask('log', [$log]);
+        } else {
+            echo $log;
+        }
     }
 
     /**

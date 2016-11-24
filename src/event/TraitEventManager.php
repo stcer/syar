@@ -6,7 +6,7 @@ namespace syar\event;
  * Class TraitEventManager
  * @package syar\event
  */
-trait TraitEventManager {
+trait TraitEventManager  {
     private $__ECallback = [];
     private $__EListeners = [];
 

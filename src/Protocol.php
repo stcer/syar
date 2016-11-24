@@ -5,12 +5,13 @@ namespace syar;
 use swoole_http_request,
     swoole_http_response,
     swoole_http_server;
+use syar\event\InterfaceEventDispatcher;
 
 /**
  * Class Protocol
  * @package syar
  */
-class Protocol {
+class Protocol implements InterfaceEventDispatcher{
 
     use event\TraitEventManager;
 	use log\TraitLog;
