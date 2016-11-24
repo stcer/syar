@@ -123,10 +123,12 @@ var_dump($rs);
 应用示例参考 example/server_plug.php, client_plug.php
 
 Protocol触发事件：
+
 1.  Protocol::EVENT_REQUEST_BEFORE, 请求开始触发, 可以提前响应客户端， 中断正常解析流程
 1.  Protocol::EVENT_RESPONSE_AFTER, 请求结束触发, 可以适用请求结束之后的处理工作，比如写日志等
 
 Dispatcher触发事件：
+
 1.  Dispatcher::EVENT_REQUEST_BEFORE, Api接口执行前触发
 1.  Dispatcher::EVENT_REQUEST_AFTER, Api接口执行后触发
 
