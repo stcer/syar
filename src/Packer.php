@@ -94,9 +94,11 @@ class Packer{
             case  self::ENCODE_MSGPACK :
                 $instance = new EncoderMsgpack();
                 break;
+
             case  self::ENCODE_JSON :
                 $instance = new EncoderJson();
                 break;
+
             default :
                 $instance = new EncoderPHP();
         }
