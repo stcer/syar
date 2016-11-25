@@ -1,22 +1,24 @@
-## ÎªºÎÓÃswooleÀ´ÊµÏÖ Yar server
-*   ÀúÊ·´úÂëÊ¹ÓÃÁËyar, ²»Ïë¹ý¶àÐÞ¸Ä¿Í»§¶Ë´úÂë
-*   ÌáÉýYar·þÎñ¶ËÖ´ÐÐÐ§ÂÊ
-*   Ñ§Ï°swoole, yar(ÔÚ´Ë¸ÐÐ»laruence,rango¼°swoole¿ª·¢ÍÅ¶Ó)
+## ä¸ºä½•ç”¨swooleæ¥å®žçŽ° Yar server
+*   åŽ†å²ä»£ç ä½¿ç”¨äº†yar, ä¸æƒ³è¿‡å¤šä¿®æ”¹å®¢æˆ·ç«¯ä»£ç 
+*   æå‡YaræœåŠ¡ç«¯æ‰§è¡Œæ•ˆçŽ‡
+*   å­¦ä¹ swoole, yar(åœ¨æ­¤æ„Ÿè°¢laruence,rangoåŠswooleå¼€å‘å›¢é˜Ÿ)
 
 ## Requirements
 1.   php5.4+
 1.   ext-swoole 1.8.8+ 
-1.   ext-msgpack Èç¹ûyarÊ¹ÓÃmsgpack±àÂë·½Ê½
+1.   ext-msgpack å¦‚æžœyarä½¿ç”¨msgpackç¼–ç æ–¹å¼
 
 ## Installation
-~~~
-composer require 'stcer/syar:*'
-~~~
+
+```
+composer require stcer/syar
+```
 
 ## Example
-**·þÎñ¶Ë**
+**æœåŠ¡ç«¯**
 example\server.php
-~~~
+
+```
 use syar\Server;
 use syar\log\File as FileLog;
 use syar\log\Log;
@@ -41,11 +43,12 @@ $server->setDispatcher(function(\syar\Token $token, $isDocument) use ($service){
 });
 
 $server->run(['max_request' => 10000]);
-~~~
+
+```
 
 example/service/Test.php
 
-~~~
+```
 namespace syar\example\service;
 
 /**
@@ -61,15 +64,18 @@ class Test {
 		return 20;
 	}
 }
-~~~
 
-ÃüÁîÐÐÆô¶¯server.php 
-~~~
+```
+
+å‘½ä»¤è¡Œå¯åŠ¨server.php 
+
+```
 #php server.php
-~~~
 
-**¿Í»§¶Ë**
-~~~
+```
+
+**å®¢æˆ·ç«¯**
+```
 $url = "http://127.0.0.1:5604/test";
 $client = new Yar_client($url);
 $name = $client->getName("tester");
@@ -79,20 +85,21 @@ $age = $client->getAge();
 echo "<pre>\n";
 var_dump($name);
 var_dump($age);
-~~~
 
-## À©Õ¹ÌØÐÔ
+```
 
-### ½Ó¿ÚÅúÁ¿ÇëÇó
-*   ÅúÁ¿ÇëÇóµÄ½Ó¿Ú,·þÎñ¶ËÊ¹ÓÃ¶à¸öÈÎÎñ½ø³Ì²¢ÐÐÖ´ÐÐ
-*   ÇëÇóµØÖ· http://{your_server_address}/multiple
-*   µ÷ÓÃ·½·¨Ãû function calls($requests);
-    $requests²ÎÊý¸ñÊ½ [ÇëÇó1Êý×é, ÇëÇó2Êý×é, ...], 
-    ÇëÇóÊý¾Ý¸ñÊ½£º['api' => ApiName, 'method' => MethodName, 'params' => []]
-*   µ¥¸ö½Ó¿ÚÖ´ÐÐ´íÎó, ·þÎñ¶Ë¼ÇÂ¼´íÎóÈÕÖ¾, ·µ»Ø['code' => CODE, 'error' => ERROR MESSAGE]¸ñÊ½Êý×é, ¿Í»§¶Ë×ÔÐÐ´¦Àí
+## æ‰©å±•ç‰¹æ€§
 
-¿Í»§¶ËÇëÇóÊ¾Àý£º
-~~~
+### æŽ¥å£æ‰¹é‡è¯·æ±‚
+*   æ‰¹é‡è¯·æ±‚çš„æŽ¥å£,æœåŠ¡ç«¯ä½¿ç”¨å¤šä¸ªä»»åŠ¡è¿›ç¨‹å¹¶è¡Œæ‰§è¡Œ
+*   è¯·æ±‚åœ°å€ http://{your_server_address}/multiple
+*   è°ƒç”¨æ–¹æ³•å function calls($requests);
+    $requestså‚æ•°æ ¼å¼ [è¯·æ±‚1æ•°ç»„, è¯·æ±‚2æ•°ç»„, ...], 
+    è¯·æ±‚æ•°æ®æ ¼å¼ï¼š['api' => ApiName, 'method' => MethodName, 'params' => []]
+*   å•ä¸ªæŽ¥å£æ‰§è¡Œé”™è¯¯, æœåŠ¡ç«¯è®°å½•é”™è¯¯æ—¥å¿—, è¿”å›ž['code' => CODE, 'error' => ERROR MESSAGE]æ ¼å¼æ•°ç»„, å®¢æˆ·ç«¯è‡ªè¡Œå¤„ç†
+
+å®¢æˆ·ç«¯è¯·æ±‚ç¤ºä¾‹ï¼š
+```
 #example/client_mul.php
 $vendorPath = ...;
 $loader = include($vendorPath . "/autoload.php");
@@ -115,33 +122,33 @@ $calls = [
 $rs = $client->calls($calls);
 
 var_dump($rs);
-~~~
+```
 
 
-### Protocol²å¼þÓëDispatcher²å¼þ
+### Protocolæ’ä»¶ä¸ŽDispatcheræ’ä»¶
 
-Ó¦ÓÃÊ¾Àý²Î¿¼ example/server_plug.php, client_plug.php
+åº”ç”¨ç¤ºä¾‹å‚è€ƒ example/server_plug.php, client_plug.php
 
-Protocol´¥·¢ÊÂ¼þ£º
+Protocolè§¦å‘äº‹ä»¶ï¼š
 
-1.  Protocol::EVENT_REQUEST_BEFORE, ÇëÇó¿ªÊ¼´¥·¢, ¿ÉÒÔÌáÇ°ÏìÓ¦¿Í»§¶Ë£¬ ÖÐ¶ÏÕý³£½âÎöÁ÷³Ì
-1.  Protocol::EVENT_RESPONSE_AFTER, ÇëÇó½áÊø´¥·¢, ¿ÉÒÔÊÊÓÃÇëÇó½áÊøÖ®ºóµÄ´¦Àí¹¤×÷£¬±ÈÈçÐ´ÈÕÖ¾µÈ
+1.  Protocol::EVENT_REQUEST_BEFORE, è¯·æ±‚å¼€å§‹è§¦å‘, å¯ä»¥æå‰å“åº”å®¢æˆ·ç«¯ï¼Œ ä¸­æ–­æ­£å¸¸è§£æžæµç¨‹
+1.  Protocol::EVENT_RESPONSE_AFTER, è¯·æ±‚ç»“æŸè§¦å‘, å¯ä»¥é€‚ç”¨è¯·æ±‚ç»“æŸä¹‹åŽçš„å¤„ç†å·¥ä½œï¼Œæ¯”å¦‚å†™æ—¥å¿—ç­‰
 
-Dispatcher´¥·¢ÊÂ¼þ£º
+Dispatcherè§¦å‘äº‹ä»¶ï¼š
 
-1.  Dispatcher::EVENT_REQUEST_BEFORE, Api½Ó¿ÚÖ´ÐÐÇ°´¥·¢
-1.  Dispatcher::EVENT_REQUEST_AFTER, Api½Ó¿ÚÖ´ÐÐºó´¥·¢
+1.  Dispatcher::EVENT_REQUEST_BEFORE, ApiæŽ¥å£æ‰§è¡Œå‰è§¦å‘
+1.  Dispatcher::EVENT_REQUEST_AFTER, ApiæŽ¥å£æ‰§è¡ŒåŽè§¦å‘
 
 
-### Í¶µÝÈÎÎñµ½task½ø³ÌÒì²½Ö´ÐÐ
+### æŠ•é€’ä»»åŠ¡åˆ°taskè¿›ç¨‹å¼‚æ­¥æ‰§è¡Œ
 
-Ó¦ÓÃÊ¾Àý²Î¿¼ example/taskManagerServer.php
+åº”ç”¨ç¤ºä¾‹å‚è€ƒ example/taskManagerServer.php
 
 *   TaskMananger->regTask()
 *   TaskMananger->doTask()
 *   TaskMananger->doTasks()
 *   TaskMananger->doTasksAsync()
 
-## ÒÑÖªÎÊÌâ
-1.  Î´Íê³ÉÎÄµµ½âÎö£¬ ¿ÉÊ¹ÓÃ×Ô´øµÄyar serverÏÔÊ¾ÎÄµµ
-1.  ÓÉÓÚ´úÂëÊÇ´ÓË½ÓÐ¿ò¼Ü¶ÀÁ¢³öÀ´£¬¿ÉÄÜ´æÔÚÎ´Öªbug
+## å·²çŸ¥é—®é¢˜
+1.  æœªå®Œæˆæ–‡æ¡£è§£æžï¼Œ å¯ä½¿ç”¨è‡ªå¸¦çš„yar serveræ˜¾ç¤ºæ–‡æ¡£
+1.  ç”±äºŽä»£ç æ˜¯ä»Žç§æœ‰æ¡†æž¶ç‹¬ç«‹å‡ºæ¥ï¼Œå¯èƒ½å­˜åœ¨æœªçŸ¥bug

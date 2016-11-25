@@ -50,9 +50,12 @@ class Token {
 	/**
 	 * @param $key
 	 * @param null $def
-	 * @return mixed|null
+	 * @return mixed|array
 	 */
-	public function getOption($key, $def = null){
+	public function getOption($key = null, $def = null){
+        if(!$key){
+            return $this->options;
+        }
 		return isset($this->options[$key]) ? $this->options[$key] : $def;
 	}
 

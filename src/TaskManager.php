@@ -103,15 +103,15 @@ class TaskManager {
 			throw(new Exception("Invalid task id"));
 		}
 
-		$taskData = [ 'id' => $id, 'params' => $params];
+        $request = $this->getTaskArgs([$id, $params]);
 		if($this->server->taskworker){
 			// 在task进程, 任务同步执行
-			$rs = $this->processTask($taskData);
+			$rs = $this->processTask($request);
 			if($finishCallback){
 				call_user_func($finishCallback, $rs, $bindArgs);
 			}
 		} else {
-			$this->server->task($taskData, -1, function($serv, $task_id, $data) use($finishCallback, $bindArgs) {
+			$this->server->task($request, -1, function($serv, $task_id, $data) use($finishCallback, $bindArgs) {
 				if($finishCallback){
 					call_user_func($finishCallback, $data, $bindArgs);
 				}
