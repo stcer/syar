@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ÒÀÀµ example/server1.php·þÎñÆô¶¯
+ * ä¾èµ– example/server1.phpæœåŠ¡å¯åŠ¨
  * Class PackerTest
  * @package syar
  */

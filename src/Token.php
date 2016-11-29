@@ -60,6 +60,8 @@ class Token {
 	}
 
 	/**
+     * /API_PATH?args
+     * /?api=API_PATH
 	 * @return string
 	 */
 	public function getApi(){

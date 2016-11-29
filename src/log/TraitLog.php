@@ -2,18 +2,20 @@
 
 namespace syar\log;
 
+use Monolog\Logger as Monolog;
+
 /**
  * Class TraitLog
  * @package j\log
  */
 trait TraitLog  {
     /**
-     * @var LogInterface
+     * @var LogInterface|Monolog
      */
     protected $logger;
 
     /**
-     * @param LogInterface $logger
+     * @param LogInterface|Monolog $logger
      * @return $this
      */
     public function setLogger($logger) {
@@ -22,17 +24,26 @@ trait TraitLog  {
     }
 
     /**
-     * @return LogInterface
+     * @return LogInterface|Monolog
      */
     public function getLogger() {
         return isset($this->logger) ? $this->logger : null;
     }
 
-    protected function log($message, $type = 'info'){
+    /**
+     * @param $message
+     * @param string $type
+     * @param array $context
+     */
+    protected function log($message, $type = 'info', $context = []){
         if(!isset($this->logger)){
-            return null;
+            return;
         }
 
-        $this->logger->log($message, $type);
+        if($this->logger instanceof LogInterface) {
+            $this->logger->log($message, $type);
+        } else {
+            $this->logger->log($type, $message, $context);
+        }
     }
 }

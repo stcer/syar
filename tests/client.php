@@ -34,6 +34,7 @@ function post($url, $param = [], $header = []){
 
     $header = substr($data[1], 0, 82);
     $header = unpack("Nid/nVersion/NMagicNum/NReserved/a32Provider/a32Token/NBodyLen", $header);
+
     print_r($header);
     print_r(strlen(substr($data[1], 90)));
     print_r(msgpack_unpack(substr($data[1], 90)));
