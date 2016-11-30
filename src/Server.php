@@ -120,15 +120,12 @@ class Server {
     function run($setting = array()) {
         register_shutdown_function(array($this, 'handleFatal'));
 
-        $this->setOption($setting);
-
         // set options
+        $this->setOption($setting);
         $this->sw->set($this->setting);
 
-	    // check config
+        // bind method for swoole server
 	    $this->chkConfig();
-
-        // bind event
         $this->bind();
 
         // start server
@@ -137,16 +134,8 @@ class Server {
 
     protected function chkConfig(){
 	    $protocol = $this->getProtocol();
-	    if(!$protocol->getProcessor()){
-		    throw new RuntimeException("Set protocol's processor first");
-	    }
-
-	    if(!is_callable($protocol->processor)){
-		    throw new RuntimeException("Protocol processor invalid");
-	    }
-
-	    $taskManager = $this->getTaskManager();
-	    $taskManager->regTask('process', array($this->getProtocol(), 'process'));
+        $protocol->server = $this;
+        $protocol->chkConfig();
     }
 
     protected function bind(){
@@ -159,8 +148,6 @@ class Server {
         }
 
         $protocol = $this->getProtocol();
-        $protocol->server = $this;
-
         $binds = [
             'onServerStart' => 'ManagerStart',
             'onServerStop' => 'ManagerStop',
@@ -171,7 +158,6 @@ class Server {
             'onConnect' => 'Connect',
             'onReceive' => 'Receive',
             'onClose' => 'Close',
-
             'onRequest' => 'request',
             ];
         foreach($binds as $method => $evt){

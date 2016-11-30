@@ -18,7 +18,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase{
 		return $url = "http://127.0.0.1:5604/{$api}";
 	}
 
-	function tesRpc1(){
+	function testRpc1(){
 		$client = $this->getYarClient();
 		$name = $client->getName("tester");
 		$age = $client->getAge();
@@ -27,7 +27,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase{
 		$this->assertEquals($age, 20);
 	}
 
-	function tesConcurrentClient(){
+	function testConcurrentClient(){
 		$url = $this->getUrl();
 
 		$data = [];

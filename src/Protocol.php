@@ -23,20 +23,47 @@ class Protocol implements InterfaceEventDispatcher{
      * @var Server
      */
     public $server;
-    protected $taskMap = [];
+
+    /**
+     * @var callback
+     */
+    protected $processor;
 
     /**
      * @var Packer
      */
     protected $packer;
+
+
+    public $multipleApiPath = '/multiple';
+    public $multipleApiMethod = 'calls';
+    public $gzip = false;
+    public $gzip_level = 1;
+
+
     function __construct() {
         $this->packer = new Packer();
     }
 
     /**
-     * @var callback
+     * @throws RuntimeException
      */
-    public $processor;
+    public function chkConfig(){
+        if(!isset($this->server)){
+            throw new RuntimeException("Set protocol's server first");
+        }
+
+        if(!is_callable($this->getProcessor())){
+            throw new RuntimeException("Set protocol's processor first");
+        }
+
+        $taskManager = $this->server->getTaskManager();
+        $taskManager->regTask('process', array($this, 'process'));
+    }
+
+    /**
+     * @param $callback
+     */
     function setProcess($callback){
         $this->processor = $callback;
     }
@@ -48,12 +75,8 @@ class Protocol implements InterfaceEventDispatcher{
         if(!isset($this->processor)){
             $this->processor = new Dispatcher();
         }
-
         return $this->processor;
     }
-
-    protected static $taskStatus = [];
-    protected static $mulIndex = 0;
 
     /**
      * @param swoole_http_request $req
@@ -62,11 +85,8 @@ class Protocol implements InterfaceEventDispatcher{
     function onRequest(swoole_http_request $req, swoole_http_response $res) {
         $request = new Request($req);
         $response = new Response($res);
-
         if($request->isPost()) {
-            // parse post request
-            $body = $req->rawContent();
-            $request->yar = $this->packer->unpack($body);
+            $request->yar = $this->packer->unpack($req->rawContent());
         }
 
         if($this->hasListener(self::EVENT_REQUEST_BEFORE)){
@@ -76,37 +96,34 @@ class Protocol implements InterfaceEventDispatcher{
             }
         }
 
-        if($request->yar) {
-            // multiple api
+        if(isset($request->yar)) {
+            if($request->yar->isError()){
+                // 解包错误
+                $this->response([], $request, $response);
+                return;
+            }
+
             if($this->isMulApi($request)){
+                // 批量请求
                 $this->mulRequest($request, $response);
                 return;
             }
 
-	        $token = new Token(
-	        	$request->getPath(),
-		        $request->yar->getRequestMethod(),
-		        $request->yar->getRequestParams(),
-		        isset($req->get) ? $req->get : []
-	            );
-	        $isDocument = false;
+            $isDocument = false;
+            $method = $request->getYarMethod();
+            $params = $request->getYarParams();
         } else {
-	        $token = new Token(
-		        $request->getPath(),  '',  '',
-		        isset($req->get) ? $req->get : []
-	            );
-	        $isDocument = true;
+            $isDocument = true;
+            $method = $params = '';
         }
 
         // process request
-        $rs = $this->process($token, $isDocument);
+        $get = isset($req->get) ? $req->get : [];
+        $token = new Token($request->getPath(),  $method,  $params, $get);
 
-        // response result
+        $rs = $this->process($token, $isDocument);
         $this->response($rs, $request, $response);
     }
-
-    public $multipleApiPath = '/multiple';
-    public $multipleApiMethod = 'calls';
 
 	/**
 	 * @param $request Request
@@ -141,9 +158,7 @@ class Protocol implements InterfaceEventDispatcher{
 	    $requests = [];
         foreach($params as $key => $param){
 	        $token = new Token(
-		        $param['api'],
-		        $param['method'],
-		        $param['params'],
+		        $param['api'], $param['method'], $param['params'],
 		        isset($param['options']) ? $param['options'] : []
 	            );
 	        $requests[$key] = ['process', [$token]] ;
@@ -186,9 +201,6 @@ class Protocol implements InterfaceEventDispatcher{
         }
     }
 
-    public $gzip = false;
-    public $gzip_level = 1;
-
     /**
      * @param string $data
      * @param Request $request
@@ -199,27 +211,19 @@ class Protocol implements InterfaceEventDispatcher{
             return;
         }
 
-        $yar = $request->yar;
-        if($data['code'] == 200){
-            if($yar){
-                // set success result
-                $yar->setReturnValue($data['rs']);
-            } else {
-                $response->body = $data['rs'];
+        if($yar = $request->yar){
+            if(!$yar->isError()){
+                if($data['code'] == 200){
+                    $yar->setReturnValue($data['rs']);
+                } else {
+                    $yar->setError($data['error']);
+                }
             }
-        } else {
-            if($yar){
-                // set error
-                $yar->setError($data['error']);
-            } else {
-                $response->setHttpStatus(500);
-                $response->body = $data['error'];
-            }
-        }
-
-        if($yar){
             $response->setHeader('Content-Type', 'application/octet-stream');
-            $response->body = $this->packer->pack($request->yar); // set data
+            $response->body = $this->packer->pack($request->yar);
+        } else {
+            $response->setHttpStatus(500);
+            $response->body = $data['code'] == 200 ? $data['rs'] : $data['error'];
         }
 
         //压缩
@@ -231,7 +235,7 @@ class Protocol implements InterfaceEventDispatcher{
         $response->send();
 
         if($this->hasListener(self::EVENT_RESPONSE_AFTER)){
-            $this->trigger(self::EVENT_RESPONSE_AFTER, $request, $response, $data, $this);
+            $this->trigger(self::EVENT_RESPONSE_AFTER, $request, $response, $rs, $this);
         }
     }
 }
