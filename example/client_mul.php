@@ -15,7 +15,8 @@ $requests = [
 		'api' => '/test',
 		'method' => 'getName',
 		'params' => ['tester']
-	]];
+	]
+];
 $rs = $client->calls($requests);
 
 //

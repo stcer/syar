@@ -1,5 +1,4 @@
 ## 为何用swoole来实现 Yar server
-*   历史代码使用了yar, 不想过多修改客户端代码
 *   提升Yar服务端执行效率
 *   学习swoole, yar(在此感谢laruence,rango及swoole开发团队)
 
@@ -87,6 +86,62 @@ var_dump($name);
 var_dump($age);
 
 ```
+
+
+
+## 简单性能测试
+测试脚本 example/benchmark.php, 
+测试环境(虚拟机)
+
+*   cpu: i5 - 4460
+*   mem: 4G
+*   os: centos6.5
+*   php: php7(fpm: 20进程, swoole: 18进程(8 worker + 10 task)
+
+
+脚本一共完成44次接口调用：
+
+1.  简单接口调用 2次
+1.  数据库查询接口调用2次
+1.  并发简单接口调用 20次
+1.  并发数据库查询接口调用 20次
+
+```
+function test($type, $times = 5, $limit = 5){
+    $timer = new Timer();
+    $benchmark = new Benchmark($type);
+    $rs[] = $benchmark->simpleTest(); // 2
+    $rs[] = $benchmark->dbTest($limit); // 2
+    $rs[] = $benchmark->batchTest($times, $limit); // 20
+    $rs[] = $benchmark->concurrentTest($times, $limit); // 20
+    $stop = $timer->stop();
+
+    // 44 calls, 22 db, 22 normal
+    foreach($rs as $v){
+        var_dump($v);
+    }
+    
+    return $stop;
+}
+
+// start test
+$times['syar'] = test('syar');
+$times['fpm'] = test('fpm');
+var_dump($times);
+
+---------------------------
+output: 
+
+array(2) {
+  ["syar"]=>
+  float(0.01271)
+  ["fpm"]=>
+  float(0.08602)
+}
+
+```
+在当前测试环境下，fpm环境下的执行时间大概是syar下的4 -- 6倍左右，
+稍后做更详细的压力测试，服务器、客户端资源占用情况测试
 
 ## 扩展特性
 

@@ -7,11 +7,12 @@ namespace syar;
  * @package j\debug
  */
 class Debug {
+    static $lastError;
 	/**
 	 * @return string
 	 */
 	public static function traceError(){
-		$error = error_get_last();
+		$error = self::$lastError = error_get_last();
 		if (!isset($error['type'])){
 			return '';
 		}

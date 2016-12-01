@@ -3,12 +3,8 @@
 use syar\Server;
 use syar\log\Log;
 
-$vendorPath = realpath(__DIR__ . "/../vendor/");
-/** @var \Composer\Autoload\ClassLoader $loader */
-$loader = include($vendorPath . "/autoload.php");
-
+require __DIR__ . '/init.inc.php';
 $apiNs = 'syar\\example\\service\\';
-$loader->addPsr4($apiNs, __DIR__ . '/service');
 
 // main
 $server = new Server('0.0.0.0', '5604');

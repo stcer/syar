@@ -1,8 +1,7 @@
 <?php
 use syar\TaskManager;
 
-$vendorPath = realpath(__DIR__ . "/../vendor/");
-$loader = include($vendorPath . "/autoload.php");
+require __DIR__ . '/init.inc.php';
 
 $http = new swoole_http_server("0.0.0.0", 5602);
 $http->set([

@@ -36,7 +36,7 @@ class Server {
     protected $sw;
 	protected $setting = array(
 		'max_connection' => 1024,       //worker process num
-		'worker_num' => 4,       //worker process num
+		'worker_num' => 8,       //worker process num
 		'max_request' => 10000,
 		'task_worker_num' => 10,
 		'task_max_request' => 10000,
@@ -181,14 +181,31 @@ class Server {
         }
     }
 
+
+    private $currentRequest = [];
+
+    /**
+     * @param $req
+     * @param Response $response
+     */
+    public function setCurrentRequest($req, $response){
+        $this->currentRequest = [
+            'request' => $req,
+            'response' => $response,
+        ];
+    }
+
 	/**
 	 * catch error
 	 */
 	function handleFatal(){
-		// todo close current client
 		if($log = Debug::traceError()) {
 			$this->log($log, "error");
 		}
+
+		if(isset($this->currentRequest['response'])){
+            $this->currentRequest['response']->end("PHP Parse error:" . $log);
+        }
 	}
 
 	/**

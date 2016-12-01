@@ -4,10 +4,7 @@ use syar\Server;
 use syar\log\File as FileLog;
 use syar\log\Log;
 
-$vendorPath = realpath(__DIR__ . "/../vendor/");
-/** @var \Composer\Autoload\ClassLoader $loader */
-$loader = include($vendorPath . "/autoload.php");
-$loader->addPsr4('syar\\example\\service\\', __DIR__ . '/service');
+require __DIR__ . '/init.inc.php';
 
 $server = new Server('0.0.0.0', '5604');
 $server->setLogger(new Log());

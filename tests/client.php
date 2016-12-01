@@ -2,10 +2,9 @@
 
 $vendorPath = realpath(__DIR__ . "/../vendor/");
 /** @var Composer\Autoload\ClassLoader  $loader */
-$loader = include($vendorPath . 'autoload.php');
+$loader = include($vendorPath . '/autoload.php');
 
-$url = "http://192.168.0.252:5602/";
-$url = "http://jzf.9z.cn/tests/yar_server.php";
+$url = "http://syar7.x1.cn/fpm_yar_test.php";
 
 function post($url, $param = [], $header = []){
     $oCurl = curl_init();
@@ -36,13 +35,15 @@ function post($url, $param = [], $header = []){
     $header = unpack("Nid/nVersion/NMagicNum/NReserved/a32Provider/a32Token/NBodyLen", $header);
 
     print_r($header);
+    echo "\n";
     print_r(strlen(substr($data[1], 90)));
-    print_r(msgpack_unpack(substr($data[1], 90)));
+    echo "\n";
+    print_r(unserialize(substr($data[1], 90)));
 }
 
 $request = [
     'i' => '3594717145',
-    'm' => 'add',
+    'm' => 'getAge1',
     'p' => [1, 2],
 ];
 
@@ -56,7 +57,7 @@ $header = [
     'BodyLen' => 27,
 ];
 
-$data = msgpack_pack($request);
+$data = serialize($request);
 $header['BodyLen'] = strlen($data) + 8;
 
 $header = pack('NnNNa32a32N',
@@ -69,7 +70,7 @@ $header = pack('NnNNa32a32N',
     $header['BodyLen']
 );
 
-$data = $header . "MSGPACK " . $data;
+$data = $header . "PHP\x0\x0\x0\x0\x0" . $data;
 
 echo post($url, $data, [
     "User-Agent: PHP Yar Rpc-1.2.4",

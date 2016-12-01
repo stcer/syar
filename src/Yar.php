@@ -25,7 +25,7 @@ class Yar{
     public $header;
 
     /**
-     * @var EncoderInterface
+     * @var array
      */
     public $packer;
 
@@ -43,7 +43,7 @@ class Yar{
      * @var array
      * array(
         "i" => '', 
-        "s" => '', //status
+        "s" => '', //status 0 == success
         "r" => '', //return value
         "o" => '', //output
         "e" => '', //error or exception
@@ -81,9 +81,13 @@ class Yar{
 
     /**
      * @param string $message
+     * @param int $status
+     * @param string $output
      */
-    function setError($message){
+    function setError($message, $status = 1, $output = ''){
+        $this->response['s'] = $status;
         $this->response['e'] = $message;
+        $this->response['o'] = $output;
     }
 
     function getError(){

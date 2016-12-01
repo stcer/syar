@@ -85,6 +85,8 @@ class Protocol implements InterfaceEventDispatcher{
     function onRequest(swoole_http_request $req, swoole_http_response $res) {
         $request = new Request($req);
         $response = new Response($res);
+        $this->server->setCurrentRequest($request, $response);
+
         if($request->isPost()) {
             $request->yar = $this->packer->unpack($req->rawContent());
         }
@@ -150,7 +152,7 @@ class Protocol implements InterfaceEventDispatcher{
         if(!is_array($params) || count($params) == 0){
             $this->response([
                 'code' => 500,
-                "rs" => "Invalid request params"
+                "error" => "Invalid request params for multiple request"
             ], $request, $response);
             return;
         }
@@ -235,7 +237,7 @@ class Protocol implements InterfaceEventDispatcher{
         $response->send();
 
         if($this->hasListener(self::EVENT_RESPONSE_AFTER)){
-            $this->trigger(self::EVENT_RESPONSE_AFTER, $request, $response, $rs, $this);
+            $this->trigger(self::EVENT_RESPONSE_AFTER, $request, $response, $data, $this);
         }
     }
 }
