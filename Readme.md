@@ -89,8 +89,8 @@ var_dump($age);
 
 
 
-## 简单性能测试
-测试脚本 example/benchmark.php, 
+## 简单性能测试(benchmark)
+测试脚本 example/benchmark/testSimple.php, 
 测试环境(虚拟机)
 
 *   cpu: i5 - 4460
@@ -140,8 +140,14 @@ array(2) {
 }
 
 ```
-在当前测试环境下，fpm环境下的执行时间大概是syar下的4 -- 6倍左右，
-稍后做更详细的压力测试，服务器、客户端资源占用情况测试
+在当前测试环境下，在使用syar批量接口请求，fpm环境下的执行时间大概是syar下的3 -- 6倍左右，
+
+### 压力测试
+测试脚本 example/benchmark/testConcurrent.php, 
+
+*   syar 50个并发进程完成12w次接口调用(50%接口随机查询数据库) 用时25秒左右, QPS 4000+左右, 存在个别调用错误
+*   fpm 20个并发进程完成9600次接口调用, 用时26秒左右, QPS 400左右, 并产生大量Timeout was reached错误
+
 
 ## 扩展特性
 
