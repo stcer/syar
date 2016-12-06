@@ -25,20 +25,20 @@ $taskManager->regTask('send_mail', function($address = 'email@address', $content
 });
 
 $http->on('request', function ($request, $response) use ($taskManager) {
-	echo "\n";
-	$taskManager->doTask('test', ['Hello world']);
-	echo "---------\n";
-	$taskManager->doTasks([
-		['test', "Hello world 1"],
-		['send_mail', ['test@address', 'mail for test']]
-		]);
-	echo "---------\n";
-	$taskManager->doTasksAsync([
-		['test', "Hello world 1"],
-		['send_mail', ['test@address', 'mail for test']]
-	], function($rs){
-		var_dump($rs);
-	});
+    echo "\n";
+    $taskManager->doTask('test', ['Hello world']);
+    echo "---------\n";
+    $taskManager->doTasks([
+        ['test', "Hello world 1"],
+        ['send_mail', ['test@address', 'mail for test']]
+        ]);
+    echo "---------\n";
+    $taskManager->doTasksAsync([
+        ['test', "Hello world 1"],
+        ['send_mail', ['test@address', 'mail for test']]
+    ], function($rs){
+        var_dump($rs);
+    });
 	$response->end("<h1>Hello Swoole. #".rand(1000, 9999)."</h1>");
 });
 

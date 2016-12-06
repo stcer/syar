@@ -78,6 +78,7 @@ class Protocol implements InterfaceEventDispatcher{
         return $this->processor;
     }
 
+    static $i = 1;
     /**
      * @param swoole_http_request $req
      * @param swoole_http_response $res
@@ -168,17 +169,24 @@ class Protocol implements InterfaceEventDispatcher{
 
         // init
         $this->server->getTaskManager()->doTasksAsync($requests, function($results) use($request, $response){
-	        $data = [];
-			foreach($results as $key => $rs) {
-				if($rs['code'] == 200){
-					$data[$key] = $rs['rs'];
-				} else {
-					unset($rs['debug']);
-					$data[$key] = $rs;
-				}
-			}
-	        $this->response(['code' => 200, 'rs' => $data], $request, $response);
+	        $this->response(['code' => 200, 'rs' => $this->formatMulResults($results)], $request, $response);
         });
+
+//        $results = $this->server->getTaskManager()->doTasks($requests);
+//        $this->response(['code' => 200, 'rs' => $this->formatMulResults($results)], $request, $response);
+    }
+
+    protected function formatMulResults($results){
+        $data = [];
+        foreach($results as $key => $rs) {
+            if($rs['code'] == 200){
+                $data[$key] = $rs['rs'];
+            } else {
+                unset($rs['debug']);
+                $data[$key] = $rs;
+            }
+        }
+        return $data;
     }
 
     /**

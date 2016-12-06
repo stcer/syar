@@ -4,6 +4,5 @@ require __DIR__ . '/../init.inc.php';
 
 use Yar_Server as Server;
 $service = new \syar\example\service\Db();
-
 $server = new Server($service);
 $server->handle();

@@ -22,13 +22,14 @@ class Db {
         $db = 'test';
         $dsn = "mysql:dbname={$db};host={$host}";
 
-        //self::$pdo = new PDO($dsn, $user, $password);
-        self::$pdo = new PDO($dsn, $user, $password, [PDO::ATTR_PERSISTENT => true]);
+        self::$pdo = new PDO($dsn, $user, $password);
+        //self::$pdo = new PDO($dsn, $user, $password, [PDO::ATTR_PERSISTENT => true]);
         return self::$pdo;
     }
 
     public function getInfo($id){
         $sql = "select * from tmp_1 where id=" . intval($id);
+        //echo $sql . "\n";
         $set = self::getDb()->query($sql);
         $info = $set->fetch(PDO::FETCH_ASSOC);
         return $info;

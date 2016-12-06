@@ -9,10 +9,25 @@ $vendorPath = realpath(__DIR__ . "/../../vendor/");
 $loader = include($vendorPath . "/autoload.php");
 require __DIR__ . '/lib.php';
 
-// 50 * 24 * 100 = 12w
-//$times['syar'] = ab('syar', 50, 100);
+$type = 'syar';
+if(PHP_SAPI == 'cli'){
+    if(isset($argv[1])){
+        $type = $argv[1];
+    }
+}
 
-// 20 * 24 * 20 = 9600
-$times['fpm'] = ab('fpm', 20, 20);
+if($type == 'syar'){
+    // 2.4w - 2.8s
+    // Qps 8500
+    $times['syar'] = ab('syar', 20, 50, false, 5);
+} elseif($type == 'syar_batch'){
+    // 2.4w - 2.6s
+    // Qps 9300
+    $times['syar_batch'] = ab('syar', 20, 50, true, 5); // QPS 3500
+} else{
+    // 2.4w - 15s
+    // Qps 1600
+    $times['fpm'] = ab('fpm', 20, 50, false, 5);
+}
+
 var_dump($times);
-//

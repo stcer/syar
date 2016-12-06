@@ -35,7 +35,10 @@ class Server {
      */
     protected $sw;
 	protected $setting = array(
-		'max_connection' => 1024,       //worker process num
+        // worker process num,
+	    // 注意设置linux 开文件数量(open files)
+        //  ulimit -n
+		'max_connection' => 10240,
 		'worker_num' => 8,       //worker process num
 		'max_request' => 10000,
 		'task_worker_num' => 10,

@@ -8,7 +8,8 @@ $loader = include($vendorPath . "/autoload.php");
 require __DIR__ . '/lib.php';
 
 // start test
-$times['syar'] = test('syar');
-$times['fpm'] = test('fpm');
+// 24 api call
+$times['syar'] = test('syar', false, 5); // 5 x 4api + 2 * 2
+$times['syar_batch'] = test('syar', true, 5);
+$times['fpm'] = test('fpm', false, 5);
 var_dump($times);
-

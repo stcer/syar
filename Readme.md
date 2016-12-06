@@ -1,5 +1,6 @@
 ## 为何用swoole来实现 Yar server
-*   提升Yar服务端执行效率
+*   提升Yar服务效率
+*   提升Yar服务稳定性
 *   学习swoole, yar(在此感谢laruence,rango及swoole开发团队)
 
 ## Requirements
@@ -142,11 +143,11 @@ array(2) {
 ```
 在当前测试环境下，在使用syar批量接口请求，fpm环境下的执行时间大概是syar下的3 -- 6倍左右，
 
-### 压力测试
-测试脚本 example/benchmark/testConcurrent.php, 
+### 简单压力测试
+测试脚本 example/benchmark/testConcurrent.php, 50%接口随机查询数据库(10000条数据, 主要为测试接口通信性能)
 
-*   syar 50个并发进程完成12w次接口调用(50%接口随机查询数据库) 用时25秒左右, QPS 4000+左右, 存在个别调用错误
-*   fpm 20个并发进程完成9600次接口调用, 用时26秒左右, QPS 400左右, 并产生大量Timeout was reached错误
+*   syar 20个并发进程2.4w次接口调用, 用时2.6s秒左右, QPS 9300左右, 可能存在个别调用错误
+*   fpm 20个并发进程2.4w次接口调用, 用时15s秒左右, QPS 1600左右, 并产生大量Timeout was reached错误
 
 
 ## 扩展特性

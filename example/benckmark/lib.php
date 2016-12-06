@@ -10,20 +10,27 @@ defined('IS_OUTPUT') || define('IS_OUTPUT', true);
 /**
  * @param $type
  * @param int $times
- * @param int $limit
+ * @param bool $batch
  * @return float
  */
-function test($type, $times = 5, $limit = 5){
+function test($type, $batch = false, $times = 0){
     $timer = new Timer();
     $benchmark = new Benchmark($type);
     $rs[] = $benchmark->simpleTest(); // 2
-    $rs[] = $benchmark->dbTest($limit); // 2
-    $rs[] = $benchmark->batchTest($times, $limit); // 20
-    //    $rs[] = $benchmark->concurrentTest($times, $limit); // 20
+    $rs[] = $benchmark->dbTest(); // 2
+
+    $times = $times ?: ($batch ? 5 : 1);
+    if($batch){
+        $rs[] = $benchmark->batchTest($times); // 4 * $times
+    } else {
+        $rs[] = $benchmark->concurrentTest($times); // 4 * $times
+    }
+
     $stop = $timer->stop();
 
     // 44 calls, 22 db, 22 normal
     if(IS_OUTPUT){
+        echo "{$type} -----------------------------\n";
         foreach($rs as $v){
             var_dump($v);
         }
@@ -32,15 +39,17 @@ function test($type, $times = 5, $limit = 5){
     return $stop;
 }
 
-function ab($type = 'syar', $n = 20, $c = 1) {
+function ab($type = 'syar', $c = 1, $n = 1, $batch = false, $times = 1) {
     $pm = new SimpleProcessorManager();
     $timer = new Timer();
-    for($i = 0; $i < $c; $i++){
-        $pm->run($n, function(swoole_process $worker) use($type){
-            test($type);
-            $worker->exit(0);
-        });
-    }
+
+    $pm->run($c, function(swoole_process $worker) use($type, $n, $batch, $times){
+        for($i = 0; $i < $n; $i++){
+            echo "Worker {$worker->pid} for the {$i}th\n";
+            test($type, $batch, $times);
+        }
+        $worker->exit(0);
+    });
     return $timer->stop();
 }
 
@@ -69,10 +78,19 @@ class Benchmark {
     }
 
     /**
+     * 1万表记录测试数据
+     * @var int
+     * @see file : mkTestData.php
+     */
+    private $maxTableId = 10000;
+    // 列表查询取前2w记录随机
+    private $maxTableStart = 5000;
+
+    /**
      * @return int
      */
     private function getInfoId(){
-        return rand(105, 225);
+        return rand(1, $this->maxTableId);
     }
 
     /**
@@ -80,7 +98,7 @@ class Benchmark {
      * @return int
      */
     private function getStart($limit = 5){
-        $start = rand($limit, 72) - $limit;
+        $start = rand($limit, $this->maxTableStart) - $limit;
         if($start < 0){
             $start = 0;
         }
@@ -103,10 +121,10 @@ class Benchmark {
         return $client;
     }
 
-    function dbTest($limit = 5){
+    function dbTest(){
         $client = $this->getClient('db');
         $info = $client->getInfo($this->getInfoId());
-        $list = $client->getList($this->getStart(), $limit);
+        $list = $client->getList($this->getStart(), $this->listLimit);
         return [$info, $list];
     }
 
@@ -119,10 +137,9 @@ class Benchmark {
 
     /**
      * @param int $times
-     * @param int $limit
      * @return array
      */
-    function concurrentTest($times = 5, $limit = 5){
+    function concurrentTest($times = 1){
         $data = [];
 
         $url1 = $this->getClient('test', true);
@@ -131,9 +148,10 @@ class Benchmark {
             $this->concurrentCall($data, $url1, 'getName', [rand(0, 245301)], 'name_' . $i);
             $this->concurrentCall($data, $url1, 'getAge', [], 'age_' . $i);
             $this->concurrentCall($data, $url2, 'getInfo', [$this->getInfoId()], 'info_' . $i);
-            $this->concurrentCall($data, $url2, 'getList', [$this->getStart(), $limit], 'list_' . $i);
+            $this->concurrentCall($data, $url2, 'getList', [$this->getStart(), $this->listLimit], 'list_' . $i);
         }
         Yar_Concurrent_Client::loop();
+        Yar_Concurrent_Client::reset();
         return $data;
     }
 
@@ -146,21 +164,22 @@ class Benchmark {
         );
     }
 
+    protected $listLimit = 2;
+
     /**
      * @param int $times
-     * @param int $limit
      * @return array
      */
-    function batchTest($times = 5, $limit = 5) {
+    function batchTest($times = 1) {
         if($this->isFpm()){
-            return $this->concurrentTest($times, $limit);
+            return $this->concurrentTest($times);
         }
         $requests = [];
         for($i = 0; $i < $times; $i++){
             $requests["age_{$i}"] = ['api' => 'test', 'method' => 'getAge', 'params' => []];
             $requests["name_{$i}"] = ['api' => 'test', 'method' => 'getName', 'params' => ['test']];
             $requests["info_{$i}"] = ['api' => 'db', 'method' => 'getInfo', 'params' => [$this->getInfoId()]];
-            $requests["list_{$i}"] = ['api' => 'db', 'method' => 'getList', 'params' => [$this->getStart(), $limit]];
+            $requests["list_{$i}"] = ['api' => 'db', 'method' => 'getList', 'params' => [$this->getStart(), $this->listLimit]];
         }
         $client = $this->getClient('multiple');
         return $client->calls($requests);
@@ -216,11 +235,13 @@ class SimpleProcessorManager{
             $workers[$pid] = $process;
         }
     }
+
     function run($workNums, $callback){
         $this->workNums = $workNums;
         $this->start($callback);
         $this->close();
     }
+
     protected function close(){
         for($i = 0; $i < $this->workNums; $i++) {
             $ret = swoole_process::wait();
